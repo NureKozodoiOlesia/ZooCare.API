@@ -112,7 +112,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Для Railway - використовуємо порт зі змінної середовища
+// Для Render/Railway - використовуємо порт зі змінної середовища
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 if (!string.IsNullOrEmpty(port))
 {

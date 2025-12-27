@@ -18,8 +18,10 @@ RUN dotnet publish "ZooCare.API.csproj" -c Release -o /app/publish /p:UseAppHost
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 10000
+
+# Render використовує PORT зі змінної середовища
+ENV ASPNETCORE_URLS=http://0.0.0.0:10000
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ZooCare.API.dll"]
