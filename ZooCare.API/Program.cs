@@ -3,7 +3,6 @@ using ZooCare.API.Data;
 using ZooCare.API.Interfaces;
 using ZooCare.API.Repositories;
 using ZooCare.API.Services;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
