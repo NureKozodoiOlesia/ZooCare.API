@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Додай цей блок для підключення БД
 builder.Services.AddDbContext<ZooContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllers();
