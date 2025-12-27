@@ -35,10 +35,21 @@ namespace ZooCare.API.Controllers
         }
 
         [HttpPost("heartbeat")]
-        public IActionResult Heartbeat([FromQuery] string serialNumber)
+        public async Task<IActionResult> Heartbeat([FromQuery] string serialNumber)
         {
-            // Heartbeat логіка може бути додана пізніше
-            return Ok(new { message = "Heartbeat received", timestamp = DateTime.UtcNow });
+            try
+            {
+                await _iotService.ProcessHeartbeatAsync(serialNumber);
+                return Ok(new { message = "Heartbeat received", timestamp = DateTime.UtcNow });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Помилка при обробці heartbeat", error = ex.Message });
+            }
         }
     }
 }

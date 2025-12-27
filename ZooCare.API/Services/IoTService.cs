@@ -31,15 +31,12 @@ namespace ZooCare.API.Services
                 throw new KeyNotFoundException($"Пристрій з серійним номером {data.SerialNumber} не знайдений");
             }
 
-            // Оновлюємо статус пристрою та час останнього heartbeat
             device.Status = "Online";
             device.LastHeartbeat = DateTime.UtcNow;
             _unitOfWork.IoTDevices.Update(device);
 
-            // 2. Визначаємо одиницю виміру на основі типу сенсора
             var unit = data.SensorType == "WaterLevel" ? "%" : "unknown";
 
-            // 3. Зберігаємо показник (History)
             var reading = new SensorReading
             {
                 DeviceId = device.Id,
@@ -51,10 +48,8 @@ namespace ZooCare.API.Services
 
             await _unitOfWork.SensorReadings.AddAsync(reading);
 
-            // 4. БІЗНЕС-ЛОГІКА: Перевірка на критичний рівень води
             if (data.SensorType == "WaterLevel" && data.Value < CRITICAL_WATER_THRESHOLD)
             {
-                // Перевіряємо чи вже є невирішене критичне сповіщення для цього вольєра
                 var existingAlert = await _context.SystemAlerts
                     .FirstOrDefaultAsync(a => 
                         a.EnclosureId == device.EnclosureId && 
@@ -64,7 +59,6 @@ namespace ZooCare.API.Services
 
                 if (existingAlert == null)
                 {
-                    // Створюємо системне сповіщення (Alert)
                     var alert = new SystemAlert
                     {
                         EnclosureId = device.EnclosureId,
@@ -79,6 +73,22 @@ namespace ZooCare.API.Services
             }
 
             // 5. Зберігаємо всі зміни (Транзакція)
+            await _unitOfWork.SaveAsync();
+        }
+
+        public async Task ProcessHeartbeatAsync(string serialNumber)
+        {
+            var device = await _context.IoTDevices
+                .FirstOrDefaultAsync(d => d.SerialNumber == serialNumber);
+
+            if (device == null)
+            {
+                throw new KeyNotFoundException($"Пристрій з серійним номером {serialNumber} не знайдений");
+            }
+
+            device.Status = "Online";
+            device.LastHeartbeat = DateTime.UtcNow;
+            _unitOfWork.IoTDevices.Update(device);
             await _unitOfWork.SaveAsync();
         }
     }
