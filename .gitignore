@@ -1,0 +1,71 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+## Rider
+.idea/
+
+## User-specific files
+*.rsuser
+*.user
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+## NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Sensitive files
+appsettings.Development.json
+*.secrets.json
+
+## Database
+*.db
+*.mdf
+*.ldf
+*.ndf
+
+## Logs
+logs/
+*.log
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Temporary files
+*.tmp
+*.temp
+*~
+
