@@ -3,12 +3,13 @@ using ZooCare.API.Data;
 using ZooCare.API.Interfaces;
 using ZooCare.API.Repositories;
 using ZooCare.API.Services;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Додай цей блок для підключення БД
 builder.Services.AddDbContext<ZooContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -76,6 +77,22 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 
 var app = builder.Build();
 
+// Застосування міграцій БД при старті (для production)
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ZooContext>();
+        context.Database.Migrate();
+        Console.WriteLine("Міграції БД успішно застосовано");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Помилка застосування міграцій БД: {ex.Message}");
+    // Не зупиняємо додаток, можливо БД ще не створена
+}
+
 // Ініціалізація ролей при старті
 try
 {
@@ -112,8 +129,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Для Render/Railway - використовуємо порт зі змінної середовища
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+// Для Render - використовуємо порт зі змінної середовища
+var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrEmpty(port))
 {
     app.Urls.Add($"http://0.0.0.0:{port}");

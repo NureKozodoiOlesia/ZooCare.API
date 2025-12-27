@@ -16,13 +16,6 @@ obj/
 *.sln.docstates
 *.userprefs
 
-## Rider
-.idea/
-
-## User-specific files
-*.rsuser
-*.user
-
 ## Build results
 [Dd]ebug/
 [Rr]elease/
