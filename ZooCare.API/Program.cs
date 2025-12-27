@@ -112,5 +112,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Для Railway - використовуємо порт зі змінної середовища
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+if (!string.IsNullOrEmpty(port))
+{
+    app.Urls.Add($"http://0.0.0.0:{port}");
+}
+
 app.Run();
 
