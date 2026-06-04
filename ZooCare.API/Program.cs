@@ -122,7 +122,10 @@ app.UseSwaggerUI();
 // CORS має бути на початку pipeline, перед UseHttpsRedirection
 app.UseCors("AllowAll");
 
-app.UseHttpsRedirection();
+// HTTPS-редірект вимкнено: IoT-клієнт (ESP32) та мобільний застосунок звертаються по http
+// (локально та через ngrok). У хмарі (Render) TLS термінується на рівні проксі, тож редірект
+// тут не потрібен і лише ламав би http-клієнтів (повертав 307).
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

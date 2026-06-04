@@ -1,12 +1,16 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
 
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
 
-const char* apiBaseUrl = "https://unopiated-stiffledly-tatum.ngrok-free.dev"; 
+// ngrok TCP-тунель: сирий TCP, без TLS і без http→https редіректу.
+// Адреса = http://<host>:<port> з рядка Forwarding `tcp://6.tcp.eu.ngrok.io:16813`.
+// УВАГА: при кожному перезапуску `ngrok tcp 5049` хост і порт змінюються — онови тут.
+const char* apiBaseUrl = "http://7.tcp.eu.ngrok.io:18667";
 
 const char* serialNumber = "WATER-SENSOR-001";
 const int readingInterval = 30000; 
@@ -145,15 +149,13 @@ void sendTelemetry(float level) {
   }
   
   HTTPClient http;
-  
+
   String url = String(apiBaseUrl) + "/api/iot/telemetry";
-  
+
   http.begin(url);
   http.addHeader("Content-Type", "application/json");
-  if (String(apiBaseUrl).indexOf("ngrok") != -1) {
-    http.addHeader("ngrok-skip-browser-warning", "true");
-  }
-  
+  http.addHeader("ngrok-skip-browser-warning", "true");
+
   StaticJsonDocument<200> doc;
   doc["serialNumber"] = serialNumber;
   doc["sensorType"] = "WaterLevel";
@@ -220,14 +222,12 @@ void sendHeartbeat() {
   }
   
   HTTPClient http;
-  
+
   String url = String(apiBaseUrl) + "/api/iot/heartbeat?serialNumber=" + String(serialNumber);
-  
+
   http.begin(url);
-  if (String(apiBaseUrl).indexOf("ngrok") != -1) {
-    http.addHeader("ngrok-skip-browser-warning", "true");
-  }
-  
+  http.addHeader("ngrok-skip-browser-warning", "true");
+
   int httpResponseCode = http.POST("");
   
   if (httpResponseCode == 200) {
